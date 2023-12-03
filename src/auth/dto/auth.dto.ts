@@ -3,11 +3,11 @@ import { IsNotEmpty, IsString, IsEmail, Length } from 'class-validator';
 export class AuthSignUpDto {
   @IsString()
   @IsNotEmpty()
-  first_name: string;
+  firstname: string;
 
   @IsString()
   @IsNotEmpty()
-  last_name: string;
+  lastname: string;
 
   @IsNotEmpty()
   @IsString()

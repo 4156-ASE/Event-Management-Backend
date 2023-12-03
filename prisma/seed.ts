@@ -13,8 +13,8 @@ async function main() {
     data: {
       email: 'admin@gmail.com',
       password: hashedPassword,
-      last_name: 'admin',
-      first_name: 'admin',
+      lastname: 'admin',
+      firstname: 'admin',
       role: 'admin',
     },
   });
@@ -25,8 +25,8 @@ async function main() {
     data: {
       email: 'abc@gmail.com',
       password: hashedPassword2,
-      last_name: 'abc',
-      first_name: 'abc',
+      lastname: 'abc',
+      firstname: 'abc',
       role: 'regular',
     },
   });

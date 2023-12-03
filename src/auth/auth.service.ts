@@ -18,7 +18,7 @@ export class AuthService {
     private jwt: JwtService,
   ) {}
   async signup(dto: AuthSignUpDto) {
-    const { email, password, last_name, first_name } = dto;
+    const { email, password, lastname, firstname } = dto;
     const foundUser = await this.prisma.user.findUnique({
       where: { email: email },
     });
@@ -30,8 +30,8 @@ export class AuthService {
       data: {
         email: email,
         password: hashedPassword,
-        last_name: last_name,
-        first_name: first_name,
+        lastname: lastname,
+        firstname: firstname,
       },
     });
     return { message: 'signup was successful' };

@@ -2,8 +2,23 @@ import { IsString } from 'class-validator';
 
 export class UserUpdateDTO {
   @IsString()
-  public firstname: string;
+  firstname: string;
 
   @IsString()
-  public lastname: string;
+  lastname: string;
+}
+
+/** User details */
+export class UserDetailDTO {
+  @IsString()
+  id: string;
+
+  @IsString()
+  email: string;
+
+  @IsString()
+  lastname: string;
+
+  @IsString()
+  firstname: string;
 }

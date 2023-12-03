@@ -3,6 +3,7 @@ export declare class AuthSignUpDto {
     last_name: string;
     email: string;
     password: string;
+    role: string;
 }
 export declare class AuthSignInDto {
     email: string;

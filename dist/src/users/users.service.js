@@ -34,6 +34,25 @@ let UsersService = class UsersService {
         });
         return { users };
     }
+    async updateMyUser(id, updatedUser, req) {
+        const decodedUserInfo = req.user;
+        const updateUser = await this.prisma.user.update({
+            where: {
+                id: id,
+            },
+            data: {
+                first_name: updatedUser.first_name,
+                last_name: updatedUser.last_name,
+            },
+        });
+        if (!updateUser) {
+            throw new common_1.NotFoundException();
+        }
+        if (updateUser.id !== decodedUserInfo.id) {
+            throw new common_1.ForbiddenException();
+        }
+        return { message: 'updated' };
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([

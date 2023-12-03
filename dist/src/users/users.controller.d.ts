@@ -1,4 +1,5 @@
 import { UsersService } from './users.service';
+import { UserUpdateDTO } from './dto/users.dto';
 export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
@@ -8,10 +9,10 @@ export declare class UsersController {
         user: {
             id: string;
             email: string;
-            role: string;
             password: string;
             last_name: string;
             first_name: string;
+            role: string;
             createdAt: Date;
             updatedAt: Date;
         };
@@ -21,5 +22,10 @@ export declare class UsersController {
             id: string;
             email: string;
         }[];
+    }>;
+    updateMyUser(params: {
+        id: string;
+    }, updateDTO: UserUpdateDTO, req: any): Promise<{
+        message: string;
     }>;
 }

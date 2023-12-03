@@ -16,6 +16,17 @@ async function main() {
             role: 'admin',
         },
     });
+    const password2 = '12345678';
+    const hashedPassword2 = await bcrypt.hash(password2, saltOrRounds);
+    await prisma.user.create({
+        data: {
+            email: 'abc@gmail.com',
+            password: hashedPassword2,
+            last_name: 'abc',
+            first_name: 'abc',
+            role: 'regular',
+        },
+    });
 }
 main()
     .catch((e) => {

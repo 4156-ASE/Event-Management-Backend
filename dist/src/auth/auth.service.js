@@ -67,6 +67,7 @@ let AuthService = class AuthService {
             token: token,
             userID: foundUser.id,
             message: 'Logged in',
+            user: foundUser,
         });
     }
     async signout(req, res) {

@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { PrismaService } from 'prisma/prisma.service';
+import { UserUpdateDTO } from './dto/users.dto';
 
 @Injectable()
 export class UsersService {
@@ -34,5 +35,28 @@ export class UsersService {
     });
 
     return { users };
+  }
+
+  async updateMyUser(id: string, updatedUser: UserUpdateDTO, req: Request) {
+    const decodedUserInfo = req.user as { id: string; email: string };
+
+    const updateUser = await this.prisma.user.update({
+      where: {
+        id: id,
+      },
+      data: {
+        first_name: updatedUser.first_name,
+        last_name: updatedUser.last_name,
+      },
+    });
+
+    if (!updateUser) {
+      throw new NotFoundException();
+    }
+
+    if (updateUser.id !== decodedUserInfo.id) {
+      throw new ForbiddenException();
+    }
+    return { message: 'updated' };
   }
 }

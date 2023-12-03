@@ -64,12 +64,12 @@ export class AuthService {
       token: token,
       userID: foundUser.id,
       message: 'Logged in',
+      user: foundUser,
     });
   }
 
   async signout(req: Request, res: Response) {
     res.clearCookie('token');
-
     return res.send({ status: 'success', message: 'Logged out succefully' });
   }
 

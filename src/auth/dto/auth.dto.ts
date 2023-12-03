@@ -18,6 +18,8 @@ export class AuthSignUpDto {
   @IsString()
   @Length(8, 20, { message: 'Password has to be at between 8 and 20 chars' })
   public password: string;
+
+  public role: string;
 }
 
 export class AuthSignInDto {

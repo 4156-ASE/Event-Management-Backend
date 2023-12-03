@@ -45,8 +45,8 @@ export class UsersService {
         id: id,
       },
       data: {
-        first_name: updatedUser.first_name,
-        last_name: updatedUser.last_name,
+        firstname: updatedUser.firstname,
+        lastname: updatedUser.lastname,
       },
     });
 

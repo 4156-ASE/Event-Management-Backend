@@ -6,10 +6,10 @@ export class UserEntity {
   id: number;
 
   @Column()
-  first_name: string;
+  firstname: string;
 
   @Column()
-  last_name: string;
+  lastname: string;
 
   @Column({ unique: true })
   email: string;

@@ -8,6 +8,7 @@ import {
   EventUpdateReq,
   RemoveUserReq,
 } from './events.dto';
+import { loginAndSaveJWT } from '../utils/request';
 
 const host = {
   id: '1',
@@ -29,7 +30,16 @@ const eventDetail = {
 
 @Controller('events')
 export class EventsController {
-  constructor() {}
+  constructor() {
+    // login and save jwt at init
+    loginAndSaveJWT()
+      .then(() => {
+        console.log('Login ems success');
+      })
+      .catch((e) => {
+        throw e;
+      });
+  }
 
   /** Create An Event */
   @Post()

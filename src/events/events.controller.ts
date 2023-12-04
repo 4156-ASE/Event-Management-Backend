@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 
 import {
   AddUserReq,
@@ -10,22 +18,36 @@ import {
 } from './events.dto';
 import { loginAndSaveJWT } from '../utils/request';
 
-const host = {
-  id: '1',
-  lastname: 'shi',
-  firstname: 'xiaozhou',
-  email: 'xiaozhou@gmail.com',
-};
+const users = [
+  {
+    id: '1',
+    lastname: 'shi',
+    firstname: 'xiaozhou',
+    email: 'xiaozhou@gmail.com',
+  },
+  {
+    id: '2',
+    lastname: 'awd',
+    firstname: 'dwadw',
+    email: 'xiaozhodawdwu@gmail.com',
+  },
+  {
+    id: '3',
+    lastname: 'afwawd',
+    firstname: 'dfwawadw',
+    email: 'xiaofwadwu@gmail.com',
+  },
+];
 
 const eventDetail = {
-  id: 'id',
+  id: '1',
   title: 'title',
   desc: 'desc',
   start_time: '2023-12-03T22:44:12.617Z',
   end_time: '2023-12-04T22:44:12.617Z',
   location: 'New York',
-  host: host,
-  participants: [host],
+  host: users[0],
+  participants: users.slice(1),
 };
 
 @Controller('events')
@@ -64,7 +86,7 @@ export class EventsController {
   }
 
   /** Update An Event */
-  @Post(':id')
+  @Put(':id')
   async update(
     @Param('id') id: string,
     @Body() body: EventUpdateReq,
@@ -76,7 +98,7 @@ export class EventsController {
 
   /** Add user to an event */
   @Post('add_user')
-  async addUser(@Body() body: AddUserReq): Promise<EventDetail> {
+  async addUserByEmail(@Body() body: AddUserReq): Promise<EventDetail> {
     console.log(body);
 
     return Promise.resolve(eventDetail);

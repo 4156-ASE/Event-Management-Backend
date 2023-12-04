@@ -29,4 +29,11 @@ export const EMS_APIs = {
   async deleteEvent(query: { eid: string }) {
     return await requestEMS.delete<boolean>(`/events/${query.eid}`);
   },
+  /** login ems */
+  async login() {
+    return await requestEMS.post<string>('/auth/login', {
+      access_id: process.env.access_id,
+      access_secret: process.env.access_secret,
+    });
+  },
 };

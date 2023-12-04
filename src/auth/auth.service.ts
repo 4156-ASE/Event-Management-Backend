@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
-import { AuthSignInDto, AuthSignUpDto } from './dto/auth.dto';
+import { AuthSignInDto, AuthSignInResp, AuthSignUpDto } from './dto/auth.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { jwtSecret } from 'src/utils/constants';
@@ -36,7 +36,7 @@ export class AuthService {
     });
     return { message: 'signup was successful' };
   }
-  async signin(dto: AuthSignInDto, req: Request, res: Response) {
+  async signin(dto: AuthSignInDto, res: Response) {
     const { email, password } = dto;
     const foundUser = await this.prisma.user.findUnique({
       where: { email: email },
@@ -65,10 +65,10 @@ export class AuthService {
       userID: foundUser.id,
       message: 'Logged in',
       user: foundUser,
-    });
+    } as AuthSignInResp);
   }
 
-  async signout(req: Request, res: Response) {
+  async signout(res: Response) {
     res.clearCookie('token');
     return res.send({ status: 'success', message: 'Logged out succefully' });
   }

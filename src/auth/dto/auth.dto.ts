@@ -40,11 +40,8 @@ export interface AuthSignInResp {
   user: {
     id: string;
     email: string;
-    password: string;
     lastname: string;
     firstname: string;
     role: string;
-    createdAt: Date;
-    updatedAt: Date;
   };
 }

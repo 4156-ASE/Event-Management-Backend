@@ -8,8 +8,7 @@ import { PrismaService } from 'prisma/prisma.service';
 import { AuthSignInDto, AuthSignInResp, AuthSignUpDto } from './dto/auth.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { jwtSecret } from 'src/utils/constants';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -93,9 +92,7 @@ export class AuthService {
       email: args.email,
     };
 
-    const token = await this.jwt.signAsync(payload, {
-      secret: jwtSecret,
-    });
+    const token = await this.jwt.signAsync(payload);
 
     return token;
   }

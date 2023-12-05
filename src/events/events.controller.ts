@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
 
@@ -97,10 +98,14 @@ export class EventsController {
     return this.eventsService.getEventDetailByEMSEvent(resp.data);
   }
 
-  /** Get Events */
+  /** Get Events by User */
   @Get()
-  async events(): Promise<Array<EventDetail>> {
-    return Promise.resolve([eventDetail]);
+  async events(@Req() req: Request): Promise<Array<EventDetail>> {
+    const resp = await EMS_APIs.getEvents({ pid: req.user.id });
+
+    return await Promise.all(
+      resp.data.map((v) => this.eventsService.getEventDetailByEMSEvent(v)),
+    );
   }
 
   /** Update An Event */

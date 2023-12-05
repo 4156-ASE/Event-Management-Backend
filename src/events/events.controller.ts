@@ -6,7 +6,9 @@ import {
   Param,
   Post,
   Put,
+  Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 
 import {
   AddUserReq,
@@ -17,6 +19,7 @@ import {
   RemoveUserReq,
 } from './events.dto';
 import { loginAndSaveJWT } from '../utils/request';
+import { EMS_APIs } from 'src/utils/api';
 
 const users = [
   {
@@ -65,8 +68,11 @@ export class EventsController {
 
   /** Create An Event */
   @Post()
-  async create(@Body() body: EventCreateReq): Promise<EventDetail> {
-    console.log(body);
+  async create(
+    @Body() body: EventCreateReq,
+    @Req() req: Request,
+  ): Promise<EventDetail> {
+    console.log(body, req.user);
 
     return Promise.resolve(eventDetail);
   }

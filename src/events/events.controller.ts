@@ -272,11 +272,38 @@ export class EventsController {
    *
    * Host cannot quit.
    */
-  @Post(':id/quit')
-  async quit(@Body() body: ChangeHostReq): Promise<EventDetail> {
-    console.log(body);
+  @Patch(':id/quit')
+  async quit(@Param('id') id: string, @Req() req: Request) {
+    let resp = await EMS_APIs.getEvent({
+      eid: id,
+    });
 
-    return Promise.resolve(eventDetail);
+    const event = resp.data;
+
+    if (event.host === req.user.id) {
+      throw new BadRequestException('Host cannot quit.');
+    }
+
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Not found user.');
+    }
+
+    event.participants = event.participants.filter((v) => v !== req.user.id);
+
+    resp = await EMS_APIs.updateEvent(
+      { eid: id },
+      {
+        participants: event.participants,
+      },
+    );
+
+    return 'ok';
   }
 
   /**

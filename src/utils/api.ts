@@ -21,7 +21,7 @@ export const EMS_APIs = {
   },
   /** update an event */
   async updateEvent(query: { eid: string }, data: EMSEventUpdateReq) {
-    return await requestEMS.put<EMSEventDetail>(`/events/${query.eid}`, data);
+    return await requestEMS.patch<EMSEventDetail>(`/events/${query.eid}`, data);
   },
   /** delete an event */
   async deleteEvent(query: { eid: string }) {

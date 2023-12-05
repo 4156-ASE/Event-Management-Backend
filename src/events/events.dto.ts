@@ -5,7 +5,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { UserDetailDTO } from 'src/users/dto/users.dto';
+import { UserDetail } from 'src/users/dto/users.dto';
 
 /** Create Event Req */
 export class EventCreateReq {
@@ -101,8 +101,8 @@ export class EventDetail {
   location: string;
 
   @IsNotEmpty()
-  host: UserDetailDTO;
+  host: UserDetail;
 
   @IsArray()
-  participants: UserDetailDTO[];
+  participants: UserDetail[];
 }

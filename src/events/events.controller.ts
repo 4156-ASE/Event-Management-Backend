@@ -20,6 +20,11 @@ import {
 } from './events.dto';
 import { loginAndSaveJWT } from '../utils/request';
 import { EMS_APIs } from 'src/utils/api';
+import { UsersService } from 'src/users/users.service';
+import { User } from '@prisma/client';
+import { UserDetail } from 'src/users/dto/users.dto';
+import { EMSEventDetail } from 'src/utils/ems.dto';
+import { EventsService } from './events.service';
 
 const users = [
   {
@@ -55,7 +60,7 @@ const eventDetail = {
 
 @Controller('events')
 export class EventsController {
-  constructor() {
+  constructor(private eventsService: EventsService) {
     // login and save jwt at init
     loginAndSaveJWT()
       .then(() => {
@@ -73,16 +78,23 @@ export class EventsController {
     @Req() req: Request,
   ): Promise<EventDetail> {
     console.log(body, req.user);
+    const resp = await EMS_APIs.createEvent({
+      ...body,
+      host: req.user.id,
+      participants: [],
+    });
 
-    return Promise.resolve(eventDetail);
+    return this.eventsService.getEventDetailByEMSEvent(resp.data);
   }
 
   /** Get An Event */
   @Get(':id')
   async event(@Param('id') id: string): Promise<EventDetail> {
-    console.log(id);
+    const resp = await EMS_APIs.getEvent({
+      eid: id,
+    });
 
-    return Promise.resolve(eventDetail);
+    return this.eventsService.getEventDetailByEMSEvent(resp.data);
   }
 
   /** Get Events */

@@ -29,6 +29,18 @@ export class UsersService {
     return { user: foundUser };
   }
 
+  async getUsersByIds(ids: string[]) {
+    const users = await this.prisma.user.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+
+    return users;
+  }
+
   async getUsers() {
     const users = await this.prisma.user.findMany({
       select: { id: true, email: true },

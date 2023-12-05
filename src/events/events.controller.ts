@@ -215,10 +215,56 @@ export class EventsController {
 
   /** Change an event's host */
   @Patch(':id/change_host')
-  async changeHost(@Body() body: ChangeHostReq): Promise<EventDetail> {
-    console.log(body);
+  async changeHost(
+    @Body() body: ChangeHostReq,
+    @Param('id') id: string,
+    @Req() req: Request,
+  ): Promise<EventDetail> {
+    let resp = await EMS_APIs.getEvent({
+      eid: id,
+    });
 
-    return Promise.resolve(eventDetail);
+    const event = resp.data;
+
+    if (event.host !== req.user.id) {
+      throw new UnauthorizedException('Not host of this event.');
+    }
+
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id: body.userId,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Not found user.');
+    }
+
+    if (event.host !== req.user.id) {
+      throw new BadRequestException('Not host of this event');
+    }
+
+    if (event.host === body.userId) {
+      throw new BadRequestException('Cannot change host to yourself.');
+    }
+
+    event.host = body.userId;
+
+    event.participants = Array.from(
+      new Set(
+        event.participants.filter((v) => v !== body.userId).concat(req.user.id),
+      ),
+    );
+
+    resp = await EMS_APIs.updateEvent(
+      { eid: id },
+      {
+        host: event.host,
+        participants: event.participants,
+      },
+    );
+
+    return this.eventsService.getEventDetailByEMSEvent(resp.data);
   }
 
   /**

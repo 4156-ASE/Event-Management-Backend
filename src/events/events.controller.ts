@@ -26,38 +26,6 @@ import { EMS_APIs } from 'src/utils/api';
 import { EventsService } from './events.service';
 import { PrismaService } from 'prisma/prisma.service';
 
-const users = [
-  {
-    id: '1',
-    lastname: 'shi',
-    firstname: 'xiaozhou',
-    email: 'xiaozhou@gmail.com',
-  },
-  {
-    id: '2',
-    lastname: 'awd',
-    firstname: 'dwadw',
-    email: 'xiaozhodawdwu@gmail.com',
-  },
-  {
-    id: '3',
-    lastname: 'afwawd',
-    firstname: 'dfwawadw',
-    email: 'xiaofwadwu@gmail.com',
-  },
-];
-
-const eventDetail = {
-  id: '1',
-  title: 'title',
-  desc: 'desc',
-  start_time: '2023-12-03T22:44:12.617Z',
-  end_time: '2023-12-04T22:44:12.617Z',
-  location: 'New York',
-  host: users[0],
-  participants: users.slice(1),
-};
-
 @Controller('events')
 export class EventsController {
   constructor(

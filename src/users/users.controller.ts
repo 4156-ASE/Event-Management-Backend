@@ -1,14 +1,29 @@
-import { Body, Controller, Get, Param, Patch, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserUpdateDTO } from './dto/users.dto';
+import { Request } from 'express';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get('me/:id')
-  getMyUser(@Param() params: { id: string }, @Req() req) {
-    return this.usersService.getMyUser(params.id, req);
+  @Get('me')
+  async getMyUser(@Req() req: Request) {
+    const users = await this.usersService.getUsersByIds([req.user.id]);
+
+    if (!users.length) {
+      throw new UnauthorizedException();
+    }
+
+    return users[0];
   }
 
   @Get()

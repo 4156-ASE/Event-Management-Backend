@@ -13,9 +13,7 @@ export const EMS_APIs = {
   },
   /** get events */
   async getEvents(query: { pid: string }) {
-    return await requestEMS.get<EMSEventDetail[]>('/events', {
-      params: query,
-    });
+    return await requestEMS.get<EMSEventDetail[]>(`/events?pid=${query.pid}`);
   },
   /** get an event */
   async getEvent(query: { eid: string }) {

@@ -63,18 +63,12 @@ export class AddUserReq {
 export class RemoveUserReq {
   @IsString()
   userId: string;
-
-  @IsString()
-  eventId: string;
 }
 
 /** Change event's host Req */
 export class ChangeHostReq {
   @IsString()
   userId: string;
-
-  @IsString()
-  eventId: string;
 }
 
 /** Event Detail */

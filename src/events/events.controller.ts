@@ -171,15 +171,50 @@ export class EventsController {
    *
    * Host cannot remove himself.
    */
-  @Post('remove_user')
-  async removeUser(@Body() body: RemoveUserReq): Promise<EventDetail> {
-    console.log(body);
+  @Patch(':id/remove_user')
+  async removeUser(
+    @Body() body: RemoveUserReq,
+    @Param('id') id: string,
+    @Req() req: Request,
+  ): Promise<EventDetail> {
+    let resp = await EMS_APIs.getEvent({
+      eid: id,
+    });
 
-    return Promise.resolve(eventDetail);
+    const event = resp.data;
+
+    if (event.host !== req.user.id) {
+      throw new UnauthorizedException('Not host of this event.');
+    }
+
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id: body.userId,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Not found user.');
+    }
+
+    if (event.host === user.id) {
+      throw new BadRequestException('Cannot remove yourself.');
+    }
+
+    event.participants = event.participants.filter((p) => p !== user.id);
+
+    resp = await EMS_APIs.updateEvent(
+      { eid: id },
+      {
+        participants: event.participants,
+      },
+    );
+
+    return this.eventsService.getEventDetailByEMSEvent(resp.data);
   }
 
   /** Change an event's host */
-  @Post('change_host')
+  @Patch(':id/change_host')
   async changeHost(@Body() body: ChangeHostReq): Promise<EventDetail> {
     console.log(body);
 
@@ -191,7 +226,7 @@ export class EventsController {
    *
    * Host cannot quit.
    */
-  @Post('quit')
+  @Post(':id/quit')
   async quit(@Body() body: ChangeHostReq): Promise<EventDetail> {
     console.log(body);
 

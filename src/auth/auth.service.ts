@@ -64,7 +64,13 @@ export class AuthService {
       token: token,
       userID: foundUser.id,
       message: 'Logged in',
-      user: foundUser,
+      user: {
+        id: foundUser.id,
+        email: foundUser.email,
+        lastname: foundUser.lastname,
+        firstname: foundUser.firstname,
+        role: foundUser.role,
+      },
     } as AuthSignInResp);
   }
 

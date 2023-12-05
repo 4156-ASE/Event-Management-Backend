@@ -1,12 +1,15 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
   Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
 
@@ -21,6 +24,7 @@ import {
 import { loginAndSaveJWT } from '../utils/request';
 import { EMS_APIs } from 'src/utils/api';
 import { EventsService } from './events.service';
+import { PrismaService } from 'prisma/prisma.service';
 
 const users = [
   {
@@ -56,7 +60,10 @@ const eventDetail = {
 
 @Controller('events')
 export class EventsController {
-  constructor(private eventsService: EventsService) {
+  constructor(
+    private eventsService: EventsService,
+    private prisma: PrismaService,
+  ) {
     // login and save jwt at init
     loginAndSaveJWT()
       .then(() => {
@@ -115,11 +122,48 @@ export class EventsController {
   }
 
   /** Add user to an event */
-  @Post('add_user')
-  async addUserByEmail(@Body() body: AddUserReq): Promise<EventDetail> {
-    console.log(body);
+  @Patch(':id/add_user')
+  async addUserByEmail(
+    @Param('id') id: string,
+    @Body() body: AddUserReq,
+    @Req() req: Request,
+  ): Promise<EventDetail> {
+    let resp = await EMS_APIs.getEvent({
+      eid: id,
+    });
 
-    return Promise.resolve(eventDetail);
+    const event = resp.data;
+
+    if (event.host !== req.user.id) {
+      throw new UnauthorizedException('Not host of this event.');
+    }
+
+    const user = await this.prisma.user.findFirst({
+      where: {
+        email: body.email,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Not found user.');
+    }
+
+    if (event.host === user.id) {
+      throw new BadRequestException('Cannot add yourself.');
+    }
+
+    event.participants = Array.from(
+      new Set(event.participants.concat(user.id)),
+    );
+
+    resp = await EMS_APIs.updateEvent(
+      { eid: id },
+      {
+        participants: event.participants,
+      },
+    );
+
+    return this.eventsService.getEventDetailByEMSEvent(resp.data);
   }
 
   /**

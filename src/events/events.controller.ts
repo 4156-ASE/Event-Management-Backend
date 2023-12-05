@@ -4,10 +4,9 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
-  Put,
   Req,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
 
@@ -21,10 +20,6 @@ import {
 } from './events.dto';
 import { loginAndSaveJWT } from '../utils/request';
 import { EMS_APIs } from 'src/utils/api';
-import { UsersService } from 'src/users/users.service';
-import { User } from '@prisma/client';
-import { UserDetail } from 'src/users/dto/users.dto';
-import { EMSEventDetail } from 'src/utils/ems.dto';
 import { EventsService } from './events.service';
 
 const users = [
@@ -109,14 +104,14 @@ export class EventsController {
   }
 
   /** Update An Event */
-  @Put(':id')
+  @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() body: EventUpdateReq,
   ): Promise<EventDetail> {
-    console.log(id, body);
+    const resp = await EMS_APIs.updateEvent({ eid: id }, body);
 
-    return Promise.resolve(eventDetail);
+    return this.eventsService.getEventDetailByEMSEvent(resp.data);
   }
 
   /** Add user to an event */

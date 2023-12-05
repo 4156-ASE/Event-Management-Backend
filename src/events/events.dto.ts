@@ -57,9 +57,6 @@ export class EventUpdateReq {
 export class AddUserReq {
   @IsString()
   email: string;
-
-  @IsString()
-  eventId: string;
 }
 
 /** Remove user from an event Req */

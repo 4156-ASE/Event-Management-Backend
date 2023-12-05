@@ -9,7 +9,7 @@ export class UserUpdateDTO {
 }
 
 /** User details */
-export class UserDetailDTO {
+export class UserDetail {
   @IsString()
   id: string;
 

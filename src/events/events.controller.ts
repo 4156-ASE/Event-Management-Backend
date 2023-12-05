@@ -80,7 +80,6 @@ export class EventsController {
     @Body() body: EventCreateReq,
     @Req() req: Request,
   ): Promise<EventDetail> {
-    console.log(body, req.user);
     const resp = await EMS_APIs.createEvent({
       ...body,
       host: req.user.id,
@@ -312,9 +311,21 @@ export class EventsController {
    * Only host can do.
    */
   @Delete(':id')
-  async delete(@Param('id') id: string): Promise<void> {
-    console.log(id);
+  async delete(@Param('id') id: string, @Req() req: Request) {
+    const resp = await EMS_APIs.getEvent({
+      eid: id,
+    });
 
-    return;
+    const event = resp.data;
+
+    if (event.host !== req.user.id) {
+      throw new UnauthorizedException('Only host can delete.');
+    }
+
+    await EMS_APIs.deleteEvent({
+      eid: id,
+    });
+
+    return 'ok';
   }
 }

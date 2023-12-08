@@ -25,9 +25,15 @@ export class EMSEventUpdateReq {
 
   location?: string;
 
-  host?: string;
+  host_email?: string;
+
+  host_name?: string;
 
   participants?: string[];
+
+  participants_email?: string[];
+
+  participants_name?: string[];
 }
 
 export class EMSEventDetail {

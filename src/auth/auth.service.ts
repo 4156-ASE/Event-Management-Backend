@@ -22,17 +22,28 @@ export class AuthService {
       where: { email: email },
     });
     if (foundUser) {
-      throw new BadRequestException('email already registered');
+      const hashedPassword = await this.hashPassword(password);
+      await this.prisma.user.update({
+        where: {
+          id: foundUser.id,
+        },
+        data: {
+          password: hashedPassword,
+          lastname: lastname,
+          firstname: firstname,
+        },
+      });
+    } else {
+      const hashedPassword = await this.hashPassword(password);
+      await this.prisma.user.create({
+        data: {
+          email: email,
+          password: hashedPassword,
+          lastname: lastname,
+          firstname: firstname,
+        },
+      });
     }
-    const hashedPassword = await this.hashPassword(password);
-    await this.prisma.user.create({
-      data: {
-        email: email,
-        password: hashedPassword,
-        lastname: lastname,
-        firstname: firstname,
-      },
-    });
     return { message: 'signup was successful' };
   }
   async signin(dto: AuthSignInDto, res: Response) {
@@ -70,7 +81,7 @@ export class AuthService {
         firstname: foundUser.firstname,
         role: foundUser.role,
       },
-    } as AuthSignInResp);
+    } as unknown as AuthSignInResp);
   }
 
   async signout(res: Response) {

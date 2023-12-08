@@ -1,6 +1,7 @@
 import {
   IsArray,
   IsDateString,
+  IsEmail,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -51,12 +52,25 @@ export class EventUpdateReq {
   @IsString()
   @IsOptional()
   location?: string;
+
+  @IsOptional()
+  host?: string;
+
+  @IsOptional()
+  participants?: string[];
 }
 
 /** Add user to an event Req */
 export class AddUserReq {
   @IsString()
+  @IsEmail()
   email: string;
+
+  @IsString()
+  firstname: string;
+
+  @IsString()
+  lastname: string;
 }
 
 /** Remove user from an event Req */

@@ -37,10 +37,14 @@ export class EventsService {
   async getEventDetailByEMSEvent(
     emsEvent: EMSEventDetail,
   ): Promise<EventDetail> {
-    const users = await this.userService.getUsersByIds(
-      [emsEvent.host].concat(emsEvent.participants),
+    const emailsResp = await this.userService.getUsersByEmail(
+      emsEvent.participants,
     );
-
+    const user_ids = emailsResp.map((x) => x.id);
+    const users = await this.userService.getUsersByIds(
+      [emsEvent.host].concat(user_ids),
+    );
+    emsEvent.participants = user_ids;
     return toEventDetail(emsEvent, users);
   }
 }

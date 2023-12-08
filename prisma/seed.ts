@@ -7,14 +7,14 @@ const prisma = new PrismaClient();
 async function main() {
   // create two dummy articles
   const saltOrRounds = 10;
-  const password = 'adminpassword';
+  const password = 'WHQ21cd1c689742';
   const hashedPassword = await bcrypt.hash(password, saltOrRounds);
   await prisma.user.create({
     data: {
-      email: 'admin@gmail.com',
+      email: 'teresewang2000@gmail.com',
       password: hashedPassword,
-      lastname: 'admin',
-      firstname: 'admin',
+      lastname: 'terese',
+      firstname: 'wang',
       role: 'admin',
     },
   });

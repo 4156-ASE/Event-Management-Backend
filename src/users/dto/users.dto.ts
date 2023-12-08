@@ -1,6 +1,10 @@
-import { IsString } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 
 export class UserUpdateDTO {
+  @IsEmail()
+  @IsString()
+  email: string;
+
   @IsString()
   firstname: string;
 
@@ -14,6 +18,7 @@ export class UserDetail {
   id: string;
 
   @IsString()
+  @IsEmail()
   email: string;
 
   @IsString()

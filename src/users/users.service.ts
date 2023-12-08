@@ -23,6 +23,18 @@ export class UsersService {
     return users;
   }
 
+  async getUsersByEmail(emails: string[]) {
+    const users = await this.prisma.user.findMany({
+      where: {
+        email: {
+          in: emails,
+        },
+      },
+    });
+
+    return users;
+  }
+
   async getUsers() {
     const users = await this.prisma.user.findMany({
       select: { id: true, email: true },
@@ -39,6 +51,7 @@ export class UsersService {
         id: id,
       },
       data: {
+        email: updatedUser.email,
         firstname: updatedUser.firstname,
         lastname: updatedUser.lastname,
       },
@@ -51,6 +64,11 @@ export class UsersService {
     if (updateUser.id !== decodedUserInfo.id) {
       throw new ForbiddenException();
     }
-    return { message: 'updated' };
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id: id,
+      },
+    });
+    return user;
   }
 }

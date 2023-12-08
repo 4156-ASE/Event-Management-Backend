@@ -63,7 +63,6 @@ export class EventsController {
     const resp = await EMS_APIs.getEvent({
       eid: id,
     });
-
     return this.eventsService.getEventDetailByEMSEvent(resp.data);
   }
 
@@ -83,8 +82,8 @@ export class EventsController {
     @Param('id') id: string,
     @Body() body: EventUpdateReq,
   ): Promise<EventDetail> {
+    console.log(body);
     const resp = await EMS_APIs.updateEvent({ eid: id }, body);
-
     return this.eventsService.getEventDetailByEMSEvent(resp.data);
   }
 
@@ -104,32 +103,43 @@ export class EventsController {
     if (event.host !== req.user.id) {
       throw new UnauthorizedException('Not host of this event.');
     }
-
     const user = await this.prisma.user.findFirst({
       where: {
         email: body.email,
       },
     });
-
     if (!user) {
-      throw new NotFoundException('Not found user.');
+      await this.prisma.user.create({
+        data: {
+          email: body.email,
+          lastname: body.lastname,
+          firstname: body.firstname,
+          password: '',
+        },
+      });
     }
 
     if (event.host === user.id) {
       throw new BadRequestException('Cannot add yourself.');
     }
-
     event.participants = Array.from(
-      new Set(event.participants.concat(user.id)),
+      new Set(event.participants.concat(user.email)),
     );
-
+    const host_user = await this.prisma.user.findFirst({
+      where: {
+        id: event.host,
+      },
+    });
     resp = await EMS_APIs.updateEvent(
       { eid: id },
       {
+        host_email: host_user.email,
+        host_name: host_user.firstname + ' ' + host_user.lastname,
         participants: event.participants,
+        participants_email: [user.email],
+        participants_name: [user.firstname + ' ' + user.lastname],
       },
     );
-
     return this.eventsService.getEventDetailByEMSEvent(resp.data);
   }
 
@@ -147,18 +157,19 @@ export class EventsController {
     let resp = await EMS_APIs.getEvent({
       eid: id,
     });
-
     const event = resp.data;
+    console.log(event);
 
     if (event.host !== req.user.id) {
       throw new UnauthorizedException('Not host of this event.');
     }
-
     const user = await this.prisma.user.findFirst({
       where: {
         id: body.userId,
       },
     });
+
+    console.log(user);
 
     if (!user) {
       throw new NotFoundException('Not found user.');
@@ -167,16 +178,31 @@ export class EventsController {
     if (event.host === user.id) {
       throw new BadRequestException('Cannot remove yourself.');
     }
+    const users = await this.prisma.user.findMany({
+      where: {
+        email: {
+          in: event.participants,
+        },
+      },
+    });
+    const user_ids = users.map((x) => x.id);
+    event.participants = user_ids.filter((p) => p !== user.id);
+    const emails = await this.prisma.user.findMany({
+      where: {
+        id: {
+          in: event.participants,
+        },
+      },
+    });
+    event.participants = emails.map((x) => x.email);
 
-    event.participants = event.participants.filter((p) => p !== user.id);
-
+    console.log(event);
     resp = await EMS_APIs.updateEvent(
       { eid: id },
       {
         participants: event.participants,
       },
     );
-
     return this.eventsService.getEventDetailByEMSEvent(resp.data);
   }
 
@@ -190,9 +216,7 @@ export class EventsController {
     let resp = await EMS_APIs.getEvent({
       eid: id,
     });
-
     const event = resp.data;
-
     if (event.host !== req.user.id) {
       throw new UnauthorizedException('Not host of this event.');
     }
@@ -216,21 +240,17 @@ export class EventsController {
     }
 
     event.host = body.userId;
-
+    console.log(event.participants);
     event.participants = Array.from(
       new Set(
-        event.participants.filter((v) => v !== body.userId).concat(req.user.id),
+        event.participants
+          .filter((v) => v !== user.email)
+          .concat(req.user.email),
       ),
     );
-
-    resp = await EMS_APIs.updateEvent(
-      { eid: id },
-      {
-        host: event.host,
-        participants: event.participants,
-      },
-    );
-
+    console.log(event);
+    resp = await EMS_APIs.updateEvent({ eid: id }, event);
+    console.log(resp);
     return this.eventsService.getEventDetailByEMSEvent(resp.data);
   }
 
@@ -266,7 +286,7 @@ export class EventsController {
     resp = await EMS_APIs.updateEvent(
       { eid: id },
       {
-        participants: event.participants,
+        participants_email: event.participants,
       },
     );
 

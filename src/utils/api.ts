@@ -12,9 +12,12 @@ export const EMS_APIs = {
     return await requestEMS.post<EMSEventDetail>('/events', body);
   },
   /** get events */
-  async getEvents(query: { pid: string }) {
-    return await requestEMS.get<EMSEventDetail[]>(`/events?pid=${query.pid}`);
+  async getEvents(query: { pid: string; email: string }) {
+    return await requestEMS.get<EMSEventDetail[]>(
+      `/events?pid=${query.pid}&email=${query.email}`,
+    );
   },
+
   /** get an event */
   async getEvent(query: { eid: string }) {
     return await requestEMS.get<EMSEventDetail>(`/events/${query.eid}`);

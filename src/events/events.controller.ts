@@ -69,8 +69,10 @@ export class EventsController {
   /** Get Events by User */
   @Get()
   async events(@Req() req: Request): Promise<Array<EventDetail>> {
-    const resp = await EMS_APIs.getEvents({ pid: req.user.id });
-
+    const resp = await EMS_APIs.getEvents({
+      pid: req.user.id,
+      email: req.user.email,
+    });
     return await Promise.all(
       resp.data.map((v) => this.eventsService.getEventDetailByEMSEvent(v)),
     );
